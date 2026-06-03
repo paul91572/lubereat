@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鹿bereat 點餐系統</title>
+<style>
+body{
+    font-family: "Microsoft JhengHei", sans-serif;
+    background:#f8f5ef;
+    margin:0;
+    padding:20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+.card{
+    width:100%;
+    max-width:420px;
+    background:white;
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 8px 25px rgba(0,0,0,.1);
+    text-align:center;
+}
+h1{
+    color:#8b6f47;
+    margin-bottom:15px;
+}
+.message{
+    font-size:18px;
+    line-height:1.8;
+    margin-bottom:20px;
+}
+.btn{
+    display:block;
+    width:100%;
+    margin:10px 0;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+    cursor:pointer;
+    background:#c49a6c;
+    color:white;
+    transition:.2s;
+}
+.btn:hover{
+    transform:scale(1.02);
+}
+.hidden{
+    display:none;
+}
+</style>
+</head>
+<body>
+<div class="card">
+    <h1>🦌 鹿bereat</h1>
+    <div id="content">
+        <div class="message">
+            你好，這裡是鹿bereat<br>
+            請問你今天需要來一杯好喝的嗎？
+        </div>
+        <button class="btn" onclick="chooseYes()">1️⃣ 是</button>
+        <button class="btn" onclick="chooseNo()">2️⃣ 否</button>
+    </div>
+</div>
+<script>
+function chooseYes(){
+    document.getElementById("content").innerHTML = `
+        <div class="message">
+            好的，鹿小姐 🦌<br><br>
+            請問妳今天想要喝什麼呢？
+        </div>
+        <button class="btn" onclick="orderDrink('波霸奶茶')">🧋 波霸奶茶</button>
+        <button class="btn" onclick="orderDrink('鮮奶茶')">🥛 鮮奶茶</button>
+        <button class="btn" onclick="orderDrink('桂圓紅棗茶')">☕ 桂圓紅棗茶</button>
+    `;
+}
+function chooseNo(){
+    document.getElementById("content").innerHTML = `
+        <div class="message">
+            好的，鹿小朋友 🦌<br><br>
+            如有需要請再次點擊此連結進行點餐～<br><br>
+            穴穴你，v你50 💰❤️
+        </div>
+        <button class="btn" onclick="location.reload()">重新開始</button>
+    `;
+}
+function orderDrink(drink){
+    document.getElementById("content").innerHTML = `
+        <div class="message">
+            好的，這是妳選擇的「${drink}」<br><br>
+            晚點會有專鹿為妳送達 ❤️
+        </div>
+        <button class="btn" onclick="location.reload()">再點一杯</button>
+    `;
+}
+</script>
+</body>
+</html
