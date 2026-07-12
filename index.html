@@ -4,109 +4,569 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>鹿bereat 點餐系統</title>
+
 <style>
+*{
+    box-sizing:border-box;
+}
+
 body{
-    font-family: "Microsoft JhengHei", sans-serif;
-    background:#f8f5ef;
     margin:0;
     padding:20px;
+    min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    min-height:100vh;
+    background:#f8f5ef;
+    font-family:"Microsoft JhengHei",sans-serif;
 }
+
 .card{
     width:100%;
-    max-width:420px;
+    max-width:430px;
     background:white;
     border-radius:20px;
     padding:25px;
     box-shadow:0 8px 25px rgba(0,0,0,.1);
-    text-align:center;
 }
+
 h1{
+    text-align:center;
     color:#8b6f47;
-    margin-bottom:15px;
 }
+
 .message{
+    text-align:center;
     font-size:18px;
     line-height:1.8;
     margin-bottom:20px;
 }
+
 .btn{
-    display:block;
     width:100%;
-    margin:10px 0;
+    margin:8px 0;
     padding:14px;
-    border:none;
+    border:0;
     border-radius:12px;
-    font-size:16px;
-    cursor:pointer;
     background:#c49a6c;
     color:white;
+    font-size:16px;
+    cursor:pointer;
     transition:.2s;
 }
+
 .btn:hover{
     transform:scale(1.02);
 }
-.hidden{
-    display:none;
+
+.btn:active{
+    transform:scale(.96);
+}
+
+.selected{
+    background:#4caf50 !important;
+}
+
+.sectionTitle{
+    font-size:18px;
+    font-weight:bold;
+    margin:15px 0 10px;
+}
+
+textarea{
+    width:100%;
+    height:120px;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid #ccc;
+    resize:none;
+    font-size:15px;
+}
+
+.summary{
+    font-size:17px;
+    line-height:2;
+}
+
+#content{
+    animation:fade .3s ease;
+}
+
+@keyframes fade{
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
 }
 </style>
+
 </head>
+
 <body>
+
 <div class="card">
-    <h1>🦌 鹿bereat</h1>
-    <div id="content">
-        <div class="message">
-            你好，這裡是鹿bereat<br>
-            請問你今天需要來一杯好喝的嗎？
-        </div>
-        <button class="btn" onclick="chooseYes()">1️⃣ 是</button>
-        <button class="btn" onclick="chooseNo()">2️⃣ 否</button>
-    </div>
+
+<h1>🦌 鹿bereat</h1>
+
+<div id="content">
+
+<div class="message">
+你好，這裡是鹿bereat<br>
+請問你今天需要來一杯好喝的嗎？
 </div>
+
+<button class="btn" onclick="chooseYes()">
+1️⃣ 是
+</button>
+
+<button class="btn" onclick="chooseNo()">
+2️⃣ 否
+</button>
+
+</div>
+
+</div>
+
+
 <script>
-function chooseYes(){
-    document.getElementById("content").innerHTML = `
-        <div class="message">
-            好的，鹿小姐 🦌<br><br>
-            請問妳今天想要喝什麼呢？
-        </div>
-        const drinks = [
 
-    "波霸奶茶",
+let order={
+    drink:"",
+    sweetness:"",
+    ice:"",
+    toppings:[],
+    note:""
+};
 
-    "鮮奶茶",
 
-    "桂圓紅棗茶",
-
-    "冬瓜青茶",
-
-    "紅茶拿鐵"
-
+const drinks=[
+    "紅茶",
+    "綠茶",
+    "烏龍茶",
+    "青茶",
+    "鐵觀音",
+    "冬瓜茶",
+    "奶茶（奶精／鮮奶）",
+    "楊枝甘露",
+    "黑糖紅棗",
+    "其他（備註填寫）"
 ];
+
+
+const toppings=[
+    "波霸",
+    "粉角",
+    "仙草",
+    "椰果"
+];
+
+
+// 是否需要飲料
+
+function chooseYes(){
+    showDrinkPage();
 }
+
+
 function chooseNo(){
-    document.getElementById("content").innerHTML = `
-        <div class="message">
-            好的，鹿小朋友 🦌<br><br>
-            如有需要請再次點擊此連結進行點餐～<br><br>
-            穴穴你，v你50 💰❤️
-        </div>
-        <button class="btn" onclick="location.reload()">重新開始</button>
-    `;
+
+document.getElementById("content").innerHTML=`
+
+<div class="message">
+好的，鹿小朋友 🦌<br><br>
+如有需要請再次點擊此連結進行點餐～<br><br>
+穴穴你，v你50 💰❤️
+</div>
+
+<button class="btn" onclick="resetOrder()">
+重新開始
+</button>
+
+`;
+
 }
-function orderDrink(drink){
-    document.getElementById("content").innerHTML = `
-        <div class="message">
-            好的，這是妳選擇的「${drink}」<br><br>
-            請將此圖截下傳給鹿ㄆㄨㄟˊ<br><br>
-            晚點會有專鹿為妳送達 ❤️
-        </div>
-        <button class="btn" onclick="location.reload()">再點一杯</button>
-    `;
+
+
+// 飲料頁
+
+function showDrinkPage(){
+
+let html=`
+
+<div class="message">
+好的，鹿小姐 🦌<br><br>
+請選擇今天想喝的飲料
+</div>
+
+`;
+
+drinks.forEach(drink=>{
+
+html+=`
+
+<button class="btn drinkBtn"
+onclick="selectDrink(this,'${drink}')">
+
+${drink}
+
+</button>
+
+`;
+
+});
+
+
+html+=`
+
+<button class="btn" onclick="goSweetPage()">
+下一頁 ➜
+</button>
+
+<button class="btn" style="background:#999"
+onclick="resetOrder()">
+重新開始 ↻
+</button>
+
+`;
+
+document.getElementById("content").innerHTML=html;
+
 }
+
+
+// 選飲料
+
+function selectDrink(btn,drink){
+
+order.drink=drink;
+
+document.querySelectorAll(".drinkBtn")
+.forEach(b=>b.classList.remove("selected"));
+
+btn.classList.add("selected");
+
+}// 甜度冰塊頁
+
+function goSweetPage(){
+
+if(order.drink===""){
+    alert("請先選擇飲料");
+    return;
+}
+
+document.getElementById("content").innerHTML=`
+
+<div class="message">
+
+<div class="sectionTitle">
+🍬 甜度
+</div>
+
+<button class="btn sweetBtn"
+onclick="selectSweet(this,'一分糖')">
+一分糖
+</button>
+
+<button class="btn sweetBtn"
+onclick="selectSweet(this,'微糖')">
+微糖
+</button>
+
+<button class="btn sweetBtn"
+onclick="selectSweet(this,'半糖')">
+半糖
+</button>
+
+<button class="btn sweetBtn"
+onclick="selectSweet(this,'全糖')">
+全糖
+</button>
+
+
+<div class="sectionTitle">
+🧊 冰塊
+</div>
+
+<button class="btn iceBtn"
+onclick="selectIce(this,'去冰')">
+去冰
+</button>
+
+<button class="btn iceBtn"
+onclick="selectIce(this,'微冰')">
+微冰
+</button>
+
+<button class="btn iceBtn"
+onclick="selectIce(this,'少冰')">
+少冰
+</button>
+
+
+<button class="btn"
+onclick="goRemarkPage()">
+下一頁 ➜
+</button>
+
+<button class="btn"
+style="background:#999"
+onclick="showDrinkPage()">
+⬅ 返回飲料
+</button>
+
+</div>
+
+`;
+
+}
+
+
+// 選甜度
+
+function selectSweet(btn,value){
+
+order.sweetness=value;
+
+document.querySelectorAll(".sweetBtn")
+.forEach(b=>b.classList.remove("selected"));
+
+btn.classList.add("selected");
+
+}
+
+
+// 選冰塊
+
+function selectIce(btn,value){
+
+order.ice=value;
+
+document.querySelectorAll(".iceBtn")
+.forEach(b=>b.classList.remove("selected"));
+
+btn.classList.add("selected");
+
+}// 加料備註頁
+
+function goRemarkPage(){
+
+if(order.sweetness===""){
+    alert("請選擇甜度");
+    return;
+}
+
+if(order.ice===""){
+    alert("請選擇冰塊");
+    return;
+}
+
+
+let html=`
+
+<div class="message">
+
+<div class="sectionTitle">
+🧋 加料選擇
+</div>
+
+`;
+
+toppings.forEach(item=>{
+
+html+=`
+
+<button class="btn toppingBtn"
+onclick="selectTopping(this,'${item}')">
+
+${item}
+
+</button>
+
+`;
+
+});
+
+
+html+=`
+
+<div class="sectionTitle">
+📝 備註
+</div>
+
+
+<textarea id="note"
+placeholder="例如：
+奶茶請備註奶精或鮮奶
+其他飲料需求
+特殊需求
+
+（配料依店家現場供應為主）"></textarea>
+
+
+<button class="btn"
+onclick="finishOrder()">
+完成點餐 ❤️
+</button>
+
+
+<button class="btn"
+style="background:#999"
+onclick="goSweetPage()">
+⬅ 返回甜度冰塊
+</button>
+
+
+</div>
+
+`;
+
+document.getElementById("content").innerHTML=html;
+
+}
+
+
+// 選擇加料（可複選）
+
+function selectTopping(btn,item){
+
+if(order.toppings.includes(item)){
+
+order.toppings=
+order.toppings.filter(
+t=>t!==item
+);
+
+btn.classList.remove("selected");
+
+}else{
+
+order.toppings.push(item);
+
+btn.classList.add("selected");
+
+}
+
+}
+
+
+
+// 完成訂單
+
+function finishOrder(){
+
+order.note=
+document.getElementById("note").value;
+
+
+let toppingText=
+order.toppings.length>0
+?
+order.toppings.join("、")
+:
+"無";
+
+
+document.getElementById("content").innerHTML=`
+
+<div class="message">
+
+🦌 鹿小姐，您的訂單完成囉 ❤️
+
+</div>
+
+
+<div class="summary">
+
+🥤 飲料：
+${order.drink}
+
+<br>
+
+🍬 甜度：
+${order.sweetness}
+
+<br>
+
+🧊 冰塊：
+${order.ice}
+
+<br>
+
+🧋 加料：
+${toppingText}
+
+<br>
+
+📝 備註：
+${order.note || "無"}
+
+</div>
+
+
+<div class="message">
+
+<br>
+
+請將此畫面截圖傳給鹿ㄆㄨㄟˊ 🦌<br><br>
+
+晚點會有專鹿為妳送達 ❤️
+
+</div>
+
+
+<button class="btn"
+onclick="resetOrder()">
+
+再點一杯 🧋
+
+</button>
+
+`;
+
+}
+
+
+
+// 重置訂單
+
+function resetOrder(){
+
+order={
+    drink:"",
+    sweetness:"",
+    ice:"",
+    toppings:[],
+    note:""
+};
+
+location.reload();
+
+}
+
+
+// 頁面動畫
+
+function refreshAnimation(){
+
+let content=document.getElementById("content");
+
+content.style.animation="none";
+
+setTimeout(()=>{
+
+content.style.animation="fade .3s ease";
+
+},10);
+
+}
+
+
 </script>
+
 </body>
-</html
+
+</html>
